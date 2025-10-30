@@ -1,5 +1,7 @@
 # read_logs.py
 
+from utils import parse_line
+
 def read_log_file(log_path):
     """ Lee un archivo de log y muestra el contenido del mismo en la consola"""
     try:
@@ -8,10 +10,15 @@ def read_log_file(log_path):
             count = 0
             for line in f:
                 line = line.strip()
-                if line:
-                    print(line)
-                    count += 1
-            print(f"\n Total de lineas leidas: {count}")
+                if not line:
+                     continue
+                 
+                 
+            data = parse_line(line)
+            print(f"{data['event']:<16} | {data['user'] or '-':<10} | {data['ip'] or '-':<15} | {data['raw']}")
+            count += 1
+        
+        print(f"\nTotal de lineas procesadas: {count}")         
         
     except FileNotFoundError:
         print(f"Error: El archivo {log_path} no se encontro")
