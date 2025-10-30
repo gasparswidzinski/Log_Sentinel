@@ -43,12 +43,13 @@ def analyze_logs(df):
             df_ts["hour"] = df_ts["timestamp"].dt.hour
             
             fuera = df_ts[(df_ts["hour"] < 8) | (df_ts["hour"] > 18)]
-            print(f"\nEventos fuera de horario laboral (8am-6pm): {len(fuera)}")
+            print(f"\nEventos fuera de horario laboral (8am-6pm): {len(fuera)}\n")
             
             if fuera.empty:
-                print("No hay eventos fuera de horario laboral.")  
+                print("No hay eventos fuera de horario laboral.\n")  
             else:
-                print(fuera[["timestamp","user","ip","event","raw_line"]])
+                for _, row in fuera.iterrows():
+                    print(f"- {row['timestamp']} | user={row['user'] or '-'} | ip={row['ip'] or '-'} | {row['event'] or '-'} ")
     else:
         print("No hay datos de timestamp para analizar horarios.")
 
