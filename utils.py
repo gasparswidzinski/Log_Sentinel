@@ -58,17 +58,6 @@ def classify_event(line):
     
     return "other"
 
-def parse_line(line):
-    """ intenta devolver un diccionario ya armado"""
-    
-    return {
-        "raw_line": line,
-        "ip": extract_ip(line),
-        "user": extract_user(line),
-        "event": classify_event(line),
-        "time": datetime.now()
-    }
-    
 def extract_timestamp(line):
     """ intenta extraer un timestamp del log"""
     
@@ -78,3 +67,15 @@ def extract_timestamp(line):
         return datetime.strptime(raw_date, "%b %d %H:%M:%S %Y")
     return None
 
+
+def parse_line(line):
+    """ intenta devolver un diccionario ya armado"""
+    
+    return {
+        "raw_line": line,
+        "ip": extract_ip(line),
+        "user": extract_user(line),
+        "event": classify_event(line),
+        "timestamp": extract_timestamp(line)
+    }
+    

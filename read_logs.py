@@ -2,10 +2,11 @@
 
 from utils import parse_line
 from collections import Counter
+import pandas as pd
 
 def read_log_file(log_path):
     """ Lee un archivo de log y muestra el contenido del mismo en la consola"""
-    count = Counter()
+    data_list = []
     try:
         
         with open(log_path, 'r', encoding="utf-8") as f:
@@ -18,13 +19,11 @@ def read_log_file(log_path):
                  
             
                 data = parse_line(line)
-                event = data['event']
-                count[event] += 1
-                print(f"{data['event']:<16} | {data['user'] or '-':<10} | {data['ip'] or '-':<15} | {data['raw_line']} | {data['time']} | {data.get('processed_at', '')}")
-            
-        print("\nResumen de eventos:")  
-        for evt, qtv in count.items():
-            print(f"{evt:<16} : {qtv}")         
+                data_list.append(data)
+        
+        df = pd.DataFrame(data_list)    
+        print(df.head())
+        df.to_csv("reports/logs_procesados.csv", index=False)       
         
     except FileNotFoundError:
         print(f"Error: El archivo {log_path} no se encontro")
