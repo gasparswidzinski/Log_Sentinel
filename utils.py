@@ -16,8 +16,28 @@ def extract_ip(line):
 def extract_user(line):
     """ intenta encontrar un usuario"""
     
-    pass
-
+    """caso 1 ---> usuario invalido, regex: r"invalid user (\w+)" """
+    m = re.search(r"invalid user (\w+)")
+    if m:
+        return m.group(1)
+    
+    
+    """caso 2 ---> for root, regex: r"for (\w+)" """
+    m = re.search(r"for (\w+)")
+    if m:
+        return m.group(1)
+    
+    """caso 3 ---> sudo: username, regex: r"sudo:\s+(\w+)" """
+    m = re.search(r"sudo:\s+(\w+)")
+    if m:
+        return m.group(1)
+    
+    """caso 4 ---> (root), regex: r"\((\w+)\)" """
+    m = re.search(r"\((\w+)\)")
+    if m:
+        return m.group(1)
+    
+    
 def classify_event(line):
     """ intenta clasificar el evento del log"""
     
