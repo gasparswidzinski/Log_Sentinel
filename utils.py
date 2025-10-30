@@ -50,7 +50,7 @@ def classify_event(line):
     if "sudo" in line:
         return "sudo_command"
     
-    if "cron" in line:
+    if "CRON" in line:
         return "cron_job"  
     
     if "GET" in line or "POST" in line:

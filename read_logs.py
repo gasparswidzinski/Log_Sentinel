@@ -14,11 +14,11 @@ def read_log_file(log_path):
                      continue
                  
                  
-            data = parse_line(line)
-            print(f"{data['event']:<16} | {data['user'] or '-':<10} | {data['ip'] or '-':<15} | {data['raw_line']} | {data['time']}")
-            count += 1
-        
-        print(f"\nTotal de lineas procesadas: {count}")         
+                count += 1
+                data = parse_line(line)
+                print(f"{data['event']:<16} | {data['user'] or '-':<10} | {data['ip'] or '-':<15} | {data['raw_line']} | {data['time']}")
+            
+            print(f"\nTotal de lineas procesadas: {count}")         
         
     except FileNotFoundError:
         print(f"Error: El archivo {log_path} no se encontro")
