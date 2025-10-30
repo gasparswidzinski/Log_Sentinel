@@ -1,7 +1,7 @@
 # read_logs.py
 
 def read_log_file(log_path):
-    
+    """ Lee un archivo de log y muestra el contenido del mismo en la consola"""
     try:
         
         with open(log_path, 'r', encoding="utf-8") as f:
