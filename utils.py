@@ -41,9 +41,31 @@ def extract_user(line):
 def classify_event(line):
     """ intenta clasificar el evento del log"""
     
-    pass
+    if "Failed password" in line:
+        return "failed_login"
+    
+    if "Accepted password" in line:
+        return "successful_login"
+    
+    if "sudo" in line:
+        return "sudo_command"
+    
+    if "cron" in line:
+        return "cron_job"  
+    
+    if "GET" in line or "POST" in line:
+        return "web_request"
+    
+    return "other"
 
 def parse_line(line):
     """ intenta devolver un diccionario ya armado"""
     
-    pass
+    return {
+        "raw_line": line,
+        "ip": extract_ip(line),
+        "user": extract_user(line),
+        "event_type": classify_event(line),
+        "time": datetime.now()
+    }
+    
