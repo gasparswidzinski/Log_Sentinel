@@ -69,3 +69,12 @@ def parse_line(line):
         "time": datetime.now()
     }
     
+def extract_timestamp(line):
+    """ intenta extraer un timestamp del log"""
+    
+    m = re.match(r"([A-Z][a-z]{2})\s+(\d{1,2})\s+(\d{2}:\d{2}:\d{2})",line)
+    if m:
+        raw_date = f"{m.group(1)} {m.group(2)} {m.group(3)} 2025"
+        return datetime.strptime(raw_date, "%b %d %H:%M:%S %Y")
+    return None
+
