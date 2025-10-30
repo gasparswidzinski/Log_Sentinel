@@ -23,9 +23,9 @@ def read_log_file(log_path):
                 data_list.append(data)
         
         df = pd.DataFrame(data_list)    
-        print(df.head())
-        df.to_csv("reports/logs_procesados.csv", index=False)       
         
+        return df
+    
     except FileNotFoundError:
         print(f"Error: El archivo {log_path} no se encontro")
 
@@ -48,7 +48,7 @@ def analyze_logs(df):
             if fuera.empty:
                 print("No hay eventos fuera de horario laboral.")  
             else:
-                print(fuera[["timestamp","user","ip","event","raw"]])
+                print(fuera[["timestamp","user","ip","event","raw_line"]])
     else:
         print("No hay datos de timestamp para analizar horarios.")
 
