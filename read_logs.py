@@ -15,7 +15,7 @@ def read_log_file(log_path):
                  
                  
             data = parse_line(line)
-            print(f"{data['event']:<16} | {data['user'] or '-':<10} | {data['ip'] or '-':<15} | {data['raw']}")
+            print(f"{data['event']:<16} | {data['user'] or '-':<10} | {data['ip'] or '-':<15} | {data['raw_line']} | {data['time']}")
             count += 1
         
         print(f"\nTotal de lineas procesadas: {count}")         

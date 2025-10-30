@@ -17,23 +17,23 @@ def extract_user(line):
     """ intenta encontrar un usuario"""
     
     """caso 1 ---> usuario invalido, regex: r"invalid user (\w+)" """
-    m = re.search(r"invalid user (\w+)")
+    m = re.search(r"invalid user (\w+)",line)
     if m:
         return m.group(1)
     
     
     """caso 2 ---> for root, regex: r"for (\w+)" """
-    m = re.search(r"for (\w+)")
+    m = re.search(r"for (\w+)",line)
     if m:
         return m.group(1)
     
     """caso 3 ---> sudo: username, regex: r"sudo:\s+(\w+)" """
-    m = re.search(r"sudo:\s+(\w+)")
+    m = re.search(r"sudo:\s+(\w+)",line)
     if m:
         return m.group(1)
     
     """caso 4 ---> (root), regex: r"\((\w+)\)" """
-    m = re.search(r"\((\w+)\)")
+    m = re.search(r"\((\w+)\)",line)
     if m:
         return m.group(1)
     
@@ -65,7 +65,7 @@ def parse_line(line):
         "raw_line": line,
         "ip": extract_ip(line),
         "user": extract_user(line),
-        "event_type": classify_event(line),
+        "event": classify_event(line),
         "time": datetime.now()
     }
     
