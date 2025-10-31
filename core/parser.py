@@ -58,6 +58,21 @@ class LogParser:
         if "GET" in line or "POST" in line:
             return "web_request"
 
+    def extract_timestamp(self,line):
+        """intenta extraer el timestamp del log"""
+        
+        m = re.search(r'([A-Z][a-z]{2} \d{1,2} \d{2}:\d{2}:\d{2})',line)
+        if m:
+            timestamp_str = m.group(1)
+            current_year = datetime.now().year
+            timestamp_full_str = f"{current_year} {timestamp_str}"
+            try:
+                timestamp = datetime.strptime(timestamp_full_str, "%Y %b %d %H:%M:%S")
+                return timestamp
+            except ValueError:
+                return None
+        return None
+
     def parse_line(self,line):
         """intenta devolver un diccionario con los datos parseados de la linea"""
         
@@ -68,3 +83,4 @@ class LogParser:
             "event": self.classify_event(line),
             "timestamp": self.extract_timestamp(line),    
         }
+        
