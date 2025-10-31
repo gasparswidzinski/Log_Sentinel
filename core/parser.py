@@ -39,3 +39,21 @@ class LogParser:
         m = re.search(r"\((\w+)\)",line)    
         if m:
             return m.group(1)
+    
+    def classify_event(self,line):
+        """intenta clasificar el evento del log"""
+        
+        if "Failed password" in line:
+            return "failed_login"
+        
+        if "Accepted password" in line:
+            return "successful_login"
+        
+        if "sudo" in line:
+            return "sudo_command"
+        
+        if "CRON" in line:
+            return "cron_job"
+        
+        if "GET" in line or "POST" in line:
+            return "web_request"
