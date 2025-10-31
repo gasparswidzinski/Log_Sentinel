@@ -1,6 +1,6 @@
 # main.py
 
-from read_logs import *
+
 from core.parser import LogParser
 from core.analyzer import LogAnalyzer
 from core.reporter import LogReporter
