@@ -57,3 +57,14 @@ class LogParser:
         
         if "GET" in line or "POST" in line:
             return "web_request"
+
+    def parse_line(self,line):
+        """intenta devolver un diccionario con los datos parseados de la linea"""
+        
+        return {
+            "raw_line":line,
+            "ip":self.extract_ip(line),
+            "user":self.extract_user(line),
+            "event": self.classify_event(line),
+            "timestamp": self.extract_timestamp(line),    
+        }
