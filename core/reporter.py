@@ -34,19 +34,27 @@ class LogReporter:
             print(f" Reporte guardado en {path}")
             
     def show_offhours(self, df):
-        print("\n Eventos fuera de horario:")
+        console.print("\n [bold cyan]Eventos fuera de horario:")
         if df.empty:
-            print(" - No se encontraron.")
+            print(" [green] No se encontraron.")
             return
-        print(f"{'timestamp':<20} | {'user':<10} | {'ip':<15} | {'event':<15}")
-        print("-"*80)
+        
+        
+        table = Table(show_header=True, header_style="bold blue")
+        table.add_column("Timestamp",style= "dim")
+        table.add_column("User")
+        table.add_column("IP")
+        table.add_column("Event", style="bold")
+        
         for _, r in df.iterrows():
-            print(f"{str(r['timestamp']):<20} | {(r['user'] or '-'):<10} | {(r['ip'] or '-'):<15} | {r['event']:<15}")
+            table.add_row(str(r['timestamp']), r['user'] or '-', r['ip'] or '-', r['event'])
+        console.print(table)
+        
             
     def show_bruteforce(self, df, threshold=None, window_minutes=None):
-        print("\n Sospecha de fuerza bruta (failed_login):")
+        console.print("\n Sospecha de fuerza bruta (failed_login):")
         if df.empty:
-            print(f" - Ninguna IP superó el umbral (≥ {threshold}"
+            console.print(f" - Ninguna IP superó el umbral (≥ {threshold}"
                 + (f" en {window_minutes} min" if window_minutes else "") + ").")
             return
 
@@ -60,4 +68,4 @@ class LogReporter:
             print(info)
             # detalles opcionales
             for ts, user in zip(sub["timestamp"], sub["user"]):
-                print(f"    • {ts}  user={user or '-'}")
+                console.print(f"    • {ts}  user={user or '-'}")
