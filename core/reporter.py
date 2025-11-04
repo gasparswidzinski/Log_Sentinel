@@ -18,6 +18,7 @@ class LogReporter:
             if os.path.dirname(filename):
                 path = filename
             else:
+                base_dir = os.path.dirname(self.report_path)
                 path = os.path.join(self.outdir, filename)
 
             # Crear carpeta si no existe
