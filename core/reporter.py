@@ -1,6 +1,11 @@
 # guarda y muestra resultados
 
 import os
+from rich.console import Console
+from rich.table import Table
+from rich.panel import Panel
+
+console = Console()
 
 class LogReporter:
     
@@ -39,7 +44,7 @@ class LogReporter:
             print(f"{str(r['timestamp']):<20} | {(r['user'] or '-'):<10} | {(r['ip'] or '-'):<15} | {r['event']:<15}")
             
     def show_bruteforce(self, df, threshold=None, window_minutes=None):
-        print("\n🚨 Sospecha de fuerza bruta (failed_login):")
+        print("\n Sospecha de fuerza bruta (failed_login):")
         if df.empty:
             print(f" - Ninguna IP superó el umbral (≥ {threshold}"
                 + (f" en {window_minutes} min" if window_minutes else "") + ").")
