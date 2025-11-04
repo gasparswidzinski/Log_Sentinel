@@ -22,11 +22,11 @@ def main():
         analyzer.summarize(df)
         
         fuera = analyzer.detect_offhour(df)
-        brute = analyzer.detect_bruteforce(df)
+        brute, thr, win = analyzer.detect_bruteforce(df)
         
         print("\nEventos fuera de horario laboral:")
         reporter.show_offhours(fuera)
-        reporter.show_bruteforce(brute)
+        reporter.show_bruteforce(brute,thr,win)
         reporter.save_report(df, "reports/full_log_report.csv")
         reporter.save_report(fuera, "alerts/offhours_report.csv")
         reporter.save_report(brute, "alerts/bruteforce_report.csv")
