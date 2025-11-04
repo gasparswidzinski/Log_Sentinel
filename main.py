@@ -4,8 +4,15 @@ import json
 from core.parser import LogParser
 from core.analyzer import LogAnalyzer
 from core.reporter import LogReporter
+try:
+    from rich.panel import Panel
+    from rich.console import Console
+except ImportError:
+    Console = None
 
 def main():
+    
+    console = Console()
     
     with open("rules.json",'r', encoding='utf-8') as f:
         rules = json.load(f)
@@ -30,6 +37,9 @@ def main():
         reporter.save_report(df, "reports/full_log_report.csv")
         reporter.save_report(fuera, "alerts/offhours_report.csv")
         reporter.save_report(brute, "alerts/bruteforce_report.csv")
+        console.print(Panel.fit("[bold green]✅ Análisis completado[/bold green]\n"
+                        "Reportes guardados en [yellow]reports/[/yellow] y [yellow]alerts/[/yellow]",
+                        title="[ Log Sentinel ]", border_style="green"))
     except Exception as e:
         print(f"Error durante el procesamiento: {e}")
      

@@ -1,10 +1,12 @@
 # guarda y muestra resultados
 
 import os
-from rich.console import Console
-from rich.table import Table
-from rich.panel import Panel
-
+try:
+    from rich.console import Console
+    from rich.table import Table
+    from rich.panel import Panel
+except ImportError:
+    Console = None
 console = Console()
 
 class LogReporter:
