@@ -49,7 +49,7 @@ class LogParser:
         if "Accepted password" in line:
             return "successful_login"
         
-        if "sudo" in line:
+        if "sudo:" in line:
             return "sudo_command"
         
         if "CRON" in line:
