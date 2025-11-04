@@ -25,3 +25,12 @@ class LogReporter:
         print("-"*80)
         for _, r in df.iterrows():
             print(f"{str(r['timestamp']):<20} | {(r['user'] or '-'):<10} | {(r['ip'] or '-'):<15} | {r['event']:<15}")
+            
+    def show_bruteforce(self, df):
+        print(" \n sospecha de fuerza bruta (failed_login):")
+        if df.empty:
+            print(" ninguna IP supero el umbral")
+            return
+        else:
+            for ip,sub in df.groupby("ip"):
+                print(f" - IP: {ip}, intentos fallidos: {len(sub)}")
