@@ -12,11 +12,14 @@ except ImportError:
 
 def main():
     
+    """ inicializacion de console rich """
     console = Console()
     
+    """ se abre el archivo y se cargan las reglas desde rules.json """
     with open("rules.json",'r', encoding='utf-8') as f:
         rules = json.load(f)
     
+    """ se inicializa parser, analyzer y reporter """
     log_path = "logs/sample.log"
     parser = LogParser()
     analyzer = LogAnalyzer(parser, rules = rules)   
@@ -24,16 +27,25 @@ def main():
     
     
     try:
+        
+        """ lee y normaliza el log en un dataframe """
         df = analyzer.read_log_file(log_path)
         print(f"se procesaron {len(df)} lineas ")
+        
+        """ imprime el conteo de eventos por tipo """
         analyzer.summarize(df)
         
+        """ detecta eventos fuera de horario y posibles ataques de fuerza bruta """
         fuera = analyzer.detect_offhour(df)
         brute, thr, win = analyzer.detect_bruteforce(df)
         
         print("\nEventos fuera de horario laboral:")
+        
+        """ muestra los resultados """
         reporter.show_offhours(fuera)
         reporter.show_bruteforce(brute,thr,win)
+        
+        """ guarda los reportes en archivos csv """
         reporter.save_report(df, "reports/full_log_report.csv")
         reporter.save_report(fuera, "alerts/offhours_report.csv")
         reporter.save_report(brute, "alerts/bruteforce_report.csv")
