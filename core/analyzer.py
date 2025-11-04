@@ -7,6 +7,9 @@ import pandas as pd
 class LogAnalyzer:
     
     def __init__(self, parser, rules = None):
+        """ guarda un parser a usar para cada linea y un dict de rules o {} por defecto,
+        esto permite cambiar el parser o las reglas sin tocar el codigo"""
+        
         self.parser = parser
         self.rules = rules or {}
     
@@ -36,6 +39,8 @@ class LogAnalyzer:
             print(f"{evnt}: {qvt}")
     
     def detect_offhour(self, df):
+        """ lee de rules el bloque "working_hours" y toma start/end.
+        entra en las filas con timestamp no nulo y devuelve solo las que estan fuera de horario"""
         
         wh = self.rules.get("working_hours", {"start":9, "end":18})
         start = int(wh.get("start",9))

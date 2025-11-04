@@ -73,7 +73,10 @@ class LogParser:
         return "other"
 
     def extract_timestamp(self, line: str):
-        # 1) Syslog clásico: "Oct 29 18:32:45 ..."
+        """Caso sylog: arma un string con el año actual y lo parsea con datetime.strptime()
+           Caso apache: extrae el timestamp entre corchetes y lo parsea con datetime.strptime()
+        """
+        
         m = re.search(r'([A-Z][a-z]{2})\s+(\d{1,2})\s+(\d{2}:\d{2}:\d{2})', line)
         if m:
             current_year = datetime.now().year
@@ -83,11 +86,9 @@ class LogParser:
             except ValueError:
                 pass
 
-        # 2) Apache/Nginx: "[30/Oct/2025:10:46:14 +0000]"
         m2 = re.search(r'\[(\d{2}/[A-Za-z]{3}/\d{4}:\d{2}:\d{2}:\d{2}) [+\-]\d{4}\]', line)
         if m2:
             try:
-                # si querés conservar tz, usá %z; si no, parseá sin tz
                 return datetime.strptime(m2.group(1), "%d/%b/%Y:%H:%M:%S")
             except ValueError:
                 pass
