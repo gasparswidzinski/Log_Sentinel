@@ -1,0 +1,3 @@
+raw_line,ip,user,event,timestamp,hour
+Oct 29 22:15:45 server1 sudo:   admin : TTY=pts/0 ; PWD=/home/admin ; USER=root ; COMMAND=/bin/systemctl restart apache2,,admin,sudo_command,2025-10-29 22:15:45,22
+Oct 30 02:41:07 server1 sshd[1340]: Failed password for invalid user test from 200.55.22.100 port 60233 ssh2,200.55.22.100,test,failed_login,2025-10-30 02:41:07,2

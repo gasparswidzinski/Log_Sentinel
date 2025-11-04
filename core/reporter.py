@@ -8,14 +8,25 @@ class LogReporter:
         self.report_path = report_path
         os.makedirs(os.path.dirname(self.report_path), exist_ok=True)
     
-    def save_report(self, df):
-        """ Guarda el DataFrame en un archivo CSV"""
-        try:
-            df.to_csv(self.report_path, index=False)
-            print(f"Reporte guardado en {self.report_path}")
-        except Exception as e:
-            print(f"Error al guardar el reporte: {e}")
-    
+    def save_report(self, df, filename="log_report.csv"):
+            """
+            Guarda un DataFrame en CSV.
+            Si 'filename' es una ruta absoluta o contiene '/', se usa tal cual.
+            Si no, se guarda dentro del directorio 'outdir'.
+            """
+            # Si filename incluye una ruta (por ejemplo 'reports/alertas.csv'), úsala directamente
+            if os.path.dirname(filename):
+                path = filename
+            else:
+                path = os.path.join(self.outdir, filename)
+
+            # Crear carpeta si no existe
+            os.makedirs(os.path.dirname(path), exist_ok=True)
+
+            # Guardar CSV
+            df.to_csv(path, index=False)
+            print(f"💾 Reporte guardado en {path}")
+            
     def show_offhours(self, df):
         print("\n Eventos fuera de horario:")
         if df.empty:
