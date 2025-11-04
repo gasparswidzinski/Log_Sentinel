@@ -6,8 +6,9 @@ import pandas as pd
 
 class LogAnalyzer:
     
-    def __init__(self, parser):
+    def __init__(self, parser, rules = None):
         self.parser = parser
+        self.rules = rules or {}
     
     def read_log_file(self, log_path):
         """Lee un archivo de log y devuelve un DataFrame con su contenido"""

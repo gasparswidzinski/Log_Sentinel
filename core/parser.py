@@ -58,19 +58,26 @@ class LogParser:
         if "GET" in line or "POST" in line:
             return "web_request"
 
-    def extract_timestamp(self,line):
-        """intenta extraer el timestamp del log"""
-        
-        m = re.search(r'([A-Z][a-z]{2} \d{1,2} \d{2}:\d{2}:\d{2})',line)
+    def extract_timestamp(self, line: str):
+        # 1) Syslog clásico: "Oct 29 18:32:45 ..."
+        m = re.search(r'([A-Z][a-z]{2})\s+(\d{1,2})\s+(\d{2}:\d{2}:\d{2})', line)
         if m:
-            timestamp_str = m.group(1)
             current_year = datetime.now().year
-            timestamp_full_str = f"{current_year} {timestamp_str}"
+            ts = f"{current_year} {m.group(1)} {m.group(2)} {m.group(3)}"
             try:
-                timestamp = datetime.strptime(timestamp_full_str, "%Y %b %d %H:%M:%S")
-                return timestamp
+                return datetime.strptime(ts, "%Y %b %d %H:%M:%S")
             except ValueError:
-                return None
+                pass
+
+        # 2) Apache/Nginx: "[30/Oct/2025:10:46:14 +0000]"
+        m2 = re.search(r'\[(\d{2}/[A-Za-z]{3}/\d{4}:\d{2}:\d{2}:\d{2}) [+\-]\d{4}\]', line)
+        if m2:
+            try:
+                # si querés conservar tz, usá %z; si no, parseá sin tz
+                return datetime.strptime(m2.group(1), "%d/%b/%Y:%H:%M:%S")
+            except ValueError:
+                pass
+
         return None
 
     def parse_line(self,line):
