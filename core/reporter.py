@@ -38,11 +38,21 @@ class LogReporter:
         for _, r in df.iterrows():
             print(f"{str(r['timestamp']):<20} | {(r['user'] or '-'):<10} | {(r['ip'] or '-'):<15} | {r['event']:<15}")
             
-    def show_bruteforce(self, df):
-        print(" \n sospecha de fuerza bruta (failed_login):")
+    def show_bruteforce(self, df, threshold=None, window_minutes=None):
+        print("\n🚨 Sospecha de fuerza bruta (failed_login):")
         if df.empty:
-            print(" ninguna IP supero el umbral")
+            print(f" - Ninguna IP superó el umbral (≥ {threshold}"
+                + (f" en {window_minutes} min" if window_minutes else "") + ").")
             return
-        else:
-            for ip,sub in df.groupby("ip"):
-                print(f" - IP: {ip}, intentos fallidos: {len(sub)}")
+
+        for ip, sub in df.groupby("ip"):
+            qty = len(sub)
+            info = f" - IP: {ip}, intentos fallidos: {qty}"
+            if window_minutes:
+                info += f" (regla: ≥{threshold} en {window_minutes} min)"
+            else:
+                info += f" (regla: ≥{threshold})"
+            print(info)
+            # detalles opcionales
+            for ts, user in zip(sub["timestamp"], sub["user"]):
+                print(f"    • {ts}  user={user or '-'}")
