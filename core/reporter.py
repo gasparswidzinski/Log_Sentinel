@@ -12,6 +12,9 @@ console = Console()
 class LogReporter:
     
     def __init__(self, report_path: str = "reports/log_report.csv"):
+        """ guarda una ruta y crea una carpeta si no existe,
+        sirve como ubicacion por defecto para guardar reportes"""
+        
         self.report_path = report_path
         os.makedirs(os.path.dirname(self.report_path), exist_ok=True)
     
@@ -21,14 +24,14 @@ class LogReporter:
             Si 'filename' es una ruta absoluta o contiene '/', se usa tal cual.
             Si no, se guarda dentro del directorio 'outdir'.
             """
-            # Si filename incluye una ruta (por ejemplo 'reports/alertas.csv'), úsala directamente
+     
             if os.path.dirname(filename):
                 path = filename
             else:
                 base_dir = os.path.dirname(self.report_path)
                 path = os.path.join(self.outdir, filename)
 
-            # Crear carpeta si no existe
+            
             os.makedirs(os.path.dirname(path), exist_ok=True)
 
             # Guardar CSV
@@ -36,6 +39,10 @@ class LogReporter:
             print(f" Reporte guardado en {path}")
             
     def show_offhours(self, df):
+        """ muestra un titulo, si el df esta vacio lo informa, 
+        sino crea una table.rich con columnas timestamp, user, ip, event,
+        luego imprime la tabla en consola"""
+        
         console.print("\n [bold cyan]Eventos fuera de horario:")
         if df.empty:
             print(" [green] No se encontraron.")
@@ -54,6 +61,9 @@ class LogReporter:
         
             
     def show_bruteforce(self, df, threshold=None, window_minutes=None):
+        """ muestra un titulo, si el df esta vacio lo informa,,
+        si hay resultados, agrupa por ip e imprime la ip y la cantidad de intentos fallidos"""
+        
         console.print("\n Sospecha de fuerza bruta (failed_login):")
         if df.empty:
             console.print(f" - Ninguna IP superó el umbral (≥ {threshold}"
