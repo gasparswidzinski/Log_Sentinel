@@ -17,10 +17,11 @@ class LogReporter:
             print(f"Error al guardar el reporte: {e}")
     
     def show_offhours(self, df):
-        
+        print("\n Eventos fuera de horario:")
         if df.empty:
-            print("No hay eventos fuera de horario laboral.\n")
+            print(" - No se encontraron.")
             return
-        else:
-            for _, row in df.iterrows():
-                print(f"- {row['timestamp']} | user={row['user'] or '-'} | ip={row['ip'] or '-'} | {row['event'] or '-'} ")
+        print(f"{'timestamp':<20} | {'user':<10} | {'ip':<15} | {'event':<15}")
+        print("-"*80)
+        for _, r in df.iterrows():
+            print(f"{str(r['timestamp']):<20} | {(r['user'] or '-'):<10} | {(r['ip'] or '-'):<15} | {r['event']:<15}")
