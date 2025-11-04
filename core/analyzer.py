@@ -41,3 +41,18 @@ class LogAnalyzer:
         df_ts["hour"] = df_ts["timestamp"].dt.hour
         fuera = df_ts[(df_ts["hour"] < 8) | (df_ts["hour"] > 18)]
         return fuera 
+    
+    def detect_bruteforce(self,df):
+        
+        cfg = self.rules.get("failed_login", {})
+        threshold = int(cfg.get("threshold", 5))
+        failed = df[df["event"] == "failed_login"].copy()
+        if failed.empty:
+            return failed
+        
+        counts = failed.groupby("ip").size().reset_index(name='count')
+        suspects = counts[counts['count'] >= threshold]
+        
+        return failed.merge(suspects[["ip"]], on="ip" , how="inner")
+        
+        
