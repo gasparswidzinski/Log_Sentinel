@@ -7,7 +7,6 @@ from core.reporter import LogReporter
 
 def main():
     
-    print("ola")
     log_path = "logs/sample.log"
     parser = LogParser()
     analyzer = LogAnalyzer(parser)   

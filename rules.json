@@ -1,0 +1,17 @@
+{
+
+    "working_hours ": {"start":9, "end":18},
+
+    "failed_login": {
+        "threshold": 3,
+        "window_minutes":10,
+        "message": "posible ataque de fuerza bruta"
+
+    },
+
+    "sudo_command":{
+        
+        "outside_working_hours": true,
+        "message": "uso de comando sudo fuera del horario laboral"
+    }
+}

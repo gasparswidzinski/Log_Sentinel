@@ -25,7 +25,7 @@ class LogAnalyzer:
             return pd.DataFrame(data_list)
         
         except FileNotFoundError:
-            print(f"Error: El archivo {log_path} no se encontro")
+            raise
 
     def summarize(self, df):
         """Realiza un analisis basico de los logs"""
