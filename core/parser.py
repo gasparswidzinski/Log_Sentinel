@@ -9,7 +9,7 @@ class LogParser:
         pass
     
     def extract_ip(self,line):
-        """ intenta encontrar una ip"""
+        """ usa regex IPv4 para devolver la primera IP encontrada o None"""
         
         match = re.search(r'(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})',line)
         if match:
@@ -18,7 +18,12 @@ class LogParser:
             return None
     
     def extract_user(self,line):
-        """intenta encontrar un usuario"""
+        """intenta extraer un usuario, en orden, utilizando patrones tipicos:
+            "invalid user (\w+)" (usuario invalido, caso 1)
+            "for (\w+)"(for root, caso 2)
+            "sudo:\s+(\w+)" (sudo: username, caso 3)
+            "\((\w+)\)" (CRON, caso 4)
+        """
         
         """caso 1 ---> usuario invalido, regex: r"invalid user (\w+)" """
         m = re.search(r"invalid user (\w+)",line)
@@ -35,13 +40,20 @@ class LogParser:
         if m:
             return m.group(1)
         
-        """caso 4 ---> (root), regex: r"\((\w+)\)" """
+        """caso 4 ---> (CRON), regex: r"\((\w+)\)" """
         m = re.search(r"\((\w+)\)",line)    
         if m:
             return m.group(1)
     
     def classify_event(self,line):
-        """intenta clasificar el evento del log"""
+        """intenta clasificar el evento del log
+            "Failes password" -> "failed_login"
+            "Accepted password" -> "successful_login"
+            "sudo:" -> "sudo_command"
+            "CRON" -> "cron_job"
+            "GET" o "POST" -> "web_request"
+            si no encuentra ninguno, devuelve "other"
+        """
         
         if "Failed password" in line:
             return "failed_login"
