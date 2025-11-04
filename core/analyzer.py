@@ -37,10 +37,15 @@ class LogAnalyzer:
     
     def detect_offhour(self, df):
         
+        wh = self.rules.get("working_hours", {"start":9, "end":18})
+        start = int(wh.get("start",9))
+        end = int(wh.get("end",18))
         df_ts = df[df["timestamp"].notna()].copy()
+        if df_ts.empty: return df_ts
         df_ts["hour"] = df_ts["timestamp"].dt.hour
-        fuera = df_ts[(df_ts["hour"] < 8) | (df_ts["hour"] > 18)]
-        return fuera 
+        fuera = df_ts[(df_ts["hour"] < start) | (df_ts["hour"] > end)]
+        return fuera
+        
     
     def detect_bruteforce(self,df):
         

@@ -25,7 +25,7 @@ class LogReporter:
 
             # Guardar CSV
             df.to_csv(path, index=False)
-            print(f"💾 Reporte guardado en {path}")
+            print(f" Reporte guardado en {path}")
             
     def show_offhours(self, df):
         print("\n Eventos fuera de horario:")

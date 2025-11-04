@@ -57,6 +57,8 @@ class LogParser:
         
         if "GET" in line or "POST" in line:
             return "web_request"
+        
+        return "other"
 
     def extract_timestamp(self, line: str):
         # 1) Syslog clásico: "Oct 29 18:32:45 ..."
