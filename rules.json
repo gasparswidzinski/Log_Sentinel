@@ -1,6 +1,6 @@
 {
 
-    "working_hours ": {"start":9, "end":18},
+    "working_hours": {"start":9, "end":18},
 
     "failed_login": {
         "threshold": 3,
