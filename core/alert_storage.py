@@ -87,7 +87,19 @@ def append_alert(offhours_df, bruteforce_df, rules = None):
                            ]].rename(columns={"timestamp":"event_timestamp"})
             frames.append(brute)
                     
-          
+        
+        #si no hubo alertas
+        if not frames:
+            return
+        
+        #unimos todas las alertas de una sola corrida
+        new_alerts = pd.concat(frames, ignore_index=True)
+        
+        #si el archivo no existe lo creamos, sino sobreescribimos
+        if os.path.exists(HISTORY_PATH):
+            new_alerts.to_csv(HISTORY_PATH, mode='a', header=False, index=False)
+        else:
+            new_alerts.to_csv(HISTORY_PATH, mode='w', header=True, index=False)
         
     
     
