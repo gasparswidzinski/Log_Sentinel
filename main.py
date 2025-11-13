@@ -4,11 +4,14 @@ import json
 from core.parser import LogParser
 from core.analyzer import LogAnalyzer
 from core.reporter import LogReporter
+from core.alert_storage import append_alert
 try:
     from rich.panel import Panel
     from rich.console import Console
 except ImportError:
     Console = None
+
+
 
 def main():
     
@@ -44,6 +47,9 @@ def main():
         """ muestra los resultados """
         reporter.show_offhours(fuera)
         reporter.show_bruteforce(brute,thr,win)
+        
+        """ guarda las alertas detectadas en el historial """
+        append_alert(fuera,brute, rules = rules)
         
         """ guarda los reportes en archivos csv """
         reporter.save_report(df, "reports/full_log_report.csv")
