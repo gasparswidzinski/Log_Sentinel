@@ -34,7 +34,7 @@ def append_alert(offhours_df, bruteforce_df, rules = None):
         
         #utilizo las columnas originales que ya tengo, timestamp, ip, user, rawline
         off = offhours_df.copy()
-        off["timestamp" ] = run_ts
+        off["run_timestamp" ] = run_ts
         off["alert_type"] = "offhours"
         
         #se utiliza texto de reglas desde rules.json si esta disponible
