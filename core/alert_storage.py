@@ -46,6 +46,48 @@ def append_alert(offhours_df, bruteforce_df, rules = None):
             msg = f"evento fuera de horario laboral ({start} - {end})"
         off["rule"] = msg or "evento fuera de horario laboral"
         
+        #reordenamos/limitamos columnas
+        off = off[["run_timestamp",
+                   "timestamp",
+                   "alert_type",
+                   "ip",
+                   "user",
+                   "rule",
+                   "raw_line"
+                   ]].rename(columns={"timestamp":"event_timestamp"})
+        frames.append(off)
+        
+        
+        #normalizo bruteforce
+        if bruteforce_df is not None and not bruteforce_df.empty:
+            brute = bruteforce_df.copy()
+            brute["run_timestamp"] = run_ts
+            brute["alert_type"] = "bruteforce"
+            
+            #se utiliza texto de reglas desde rules.json si esta disponible
+            msg = None
+            if isinstance(rules,dict):
+                fr = rules.get("failed_login", {})
+                thr = fr.get("threshold", 3)
+                win = fr.get("window_minutes")
+                if win:
+                    msg = f"posible fuerza bruta: >={thr} intentos fallidos en {win} minutos"
+                else:
+                    msg = f"posible fuerza bruta: >={thr} intentos fallidos"
+            brute["rule"] = msg or "posible fuerza bruta detectada"
+            
+            #reordenamos/limitamos columnas
+            brute = brute[["run_timestamp",
+                           "timestamp",
+                           "alert_type",
+                           "ip",
+                           "user",
+                           "rule",
+                           "raw_line"
+                           ]].rename(columns={"timestamp":"event_timestamp"})
+            frames.append(brute)
+                    
+          
         
     
     
