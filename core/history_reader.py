@@ -24,4 +24,28 @@ def load_history():
         
     return df
 
+def history_stats(df):
+    """devuelve las estadisticas basicas en el historial de alertas,
+    -total de alertas:
+    -conteo por tipo de alerta:
+    -top ips con mas alertas:
+    -top usuarios con mas alertas:
+    """
+    
+    if df.empty:
+        return {
+            "total":0,
+            "by_type":{},
+            "top_ips":{},
+            "top_users":{},
+        }
+    
+    stats = {
+        "total": len(df),
+        "by_type": df['alert_type'].value_counts().to_dict(),
+        "top_ips": df['ip'].value_counts().head(5).to_dict(),
+        "top_users": df['user'].value_counts().head(5).to_dict(),
+    }
+    
+    return stats
 
