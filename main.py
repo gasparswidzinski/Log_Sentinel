@@ -5,6 +5,7 @@ from core.parser import LogParser
 from core.analyzer import LogAnalyzer
 from core.reporter import LogReporter
 from core.alert_storage import append_alert
+from core.history_reader import load_history, history_stats
 try:
     from rich.panel import Panel
     from rich.console import Console
@@ -50,6 +51,25 @@ def main():
         
         """ guarda las alertas detectadas en el historial """
         append_alert(fuera,brute, rules = rules)
+        
+        """ leer historial y mostrar estadisticas """
+        history_df = load_history()
+        stats = history_stats(history_df)
+        
+        console.print("\n[bold blue] Resumen historico de alertas:[/bold blue]")
+        console.print(f"Total de alertas: [yellow]{stats['total']}[/yellow]")
+        
+        console.print("\n[bold]Alertas por tipo:[/bold]")
+        for alert_type, count in stats['by_type'].items():
+            console.print(f"- {alert_type}: [yellow]{count}[/yellow]")
+        
+        console.print("\n[bold]Top Ips con mas alertas:[/bold]")
+        for ip, count in stats['top_ips'].items():
+            console.print(f"- {ip}: [yellow]{count}[/yellow]")
+        
+        console.print("\n[bold]Top Usuarios con mas alertas:[/bold]")
+        for user, count in stats['top_users'].items():
+            console.print(f"- {user}: [yellow]{count}[/yellow]")
         
         """ guarda los reportes en archivos csv """
         reporter.save_report(df, "reports/full_log_report.csv")
