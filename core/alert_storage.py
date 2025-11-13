@@ -29,6 +29,23 @@ def append_alert(offhours_df, bruteforce_df, rules = None):
     
     frames = [] #lista de DataFrames ya normalizados
     
-    
+    #normalizo offhours
+    if offhours_df is not None and not offhours_df.empty:
+        
+        #utilizo las columnas originales que ya tengo, timestamp, ip, user, rawline
+        off = offhours_df.copy()
+        off["timestamp" ] = run_ts
+        off["alert_type"] = "offhours"
+        
+        #se utiliza texto de reglas desde rules.json si esta disponible
+        msg = None
+        if isinstance(rules,dict):
+            wh = rules.get("working_hours", {})
+            start = wh.get("start",9)
+            end = wh.get("end",18)
+            msg = f"evento fuera de horario laboral ({start} - {end})"
+        off["rule"] = msg or "evento fuera de horario laboral"
+        
+        
     
     
