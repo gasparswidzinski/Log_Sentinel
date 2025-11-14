@@ -1,0 +1,2 @@
+correlation_type,ip,user,failed_count,first_fail_time,last_fail_time,success_time
+local_failed_to_success,45.23.11.90,root,3,2025-10-30 10:10:10,2025-10-30 10:10:14,2025-10-30 10:10:30

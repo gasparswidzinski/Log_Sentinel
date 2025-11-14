@@ -1,4 +1,4 @@
-# correlator.py
+# core/correlator.py
 
 import os
 from datetime import timedelta
@@ -16,7 +16,7 @@ class LogCorrelator:
     - Puede usar el historial de alertas (history_df)
     - Detecta patrones como:
         * failed_login -> successful_login (correlación local)
-        * brute force histórica -> successful_login actual (correlación histórica)
+        * brute force histórico -> successful_login actual (correlación histórica)
     """
 
     def __init__(self, events_df, history_df=None):
@@ -26,7 +26,9 @@ class LogCorrelator:
 
         # Normalizamos timestamps
         if "timestamp" in self.events.columns:
-            self.events["timestamp"] = pd.to_datetime(self.events["timestamp"], errors="coerce")
+            self.events["timestamp"] = pd.to_datetime(
+                self.events["timestamp"], errors="coerce"
+            )
 
         if "event_timestamp" in self.history.columns:
             self.history["event_timestamp"] = pd.to_datetime(
@@ -49,7 +51,17 @@ class LogCorrelator:
         """
 
         if self.events.empty:
-            return pd.DataFrame()
+            return pd.DataFrame(
+                columns=[
+                    "correlation_type",
+                    "ip",
+                    "user",
+                    "failed_count",
+                    "first_fail_time",
+                    "last_fail_time",
+                    "success_time",
+                ]
+            )
 
         df = self.events.copy()
 
@@ -58,7 +70,17 @@ class LogCorrelator:
         df = df[login_mask].dropna(subset=["timestamp"])
 
         if df.empty:
-            return pd.DataFrame()
+            return pd.DataFrame(
+                columns=[
+                    "correlation_type",
+                    "ip",
+                    "user",
+                    "failed_count",
+                    "first_fail_time",
+                    "last_fail_time",
+                    "success_time",
+                ]
+            )
 
         df = df.sort_values("timestamp")
 
@@ -99,7 +121,17 @@ class LogCorrelator:
                     )
 
         if not correlations:
-            return pd.DataFrame()
+            return pd.DataFrame(
+                columns=[
+                    "correlation_type",
+                    "ip",
+                    "user",
+                    "failed_count",
+                    "first_fail_time",
+                    "last_fail_time",
+                    "success_time",
+                ]
+            )
 
         return pd.DataFrame(correlations)
 
@@ -114,12 +146,23 @@ class LogCorrelator:
         Idea:
         - Si una IP/usuario tiene alertas de fuerza bruta en el historial
           y ahora vemos un successful_login, es MUY sospechoso.
-
-        history_window_hours: cuántas horas hacia atrás miramos en el historial.
         """
 
+        # DataFrame vacío con columnas predefinidas (para cuando no haya nada)
+        empty_hist_df = pd.DataFrame(
+            columns=[
+                "correlation_type",
+                "ip",
+                "user",
+                "prior_alerts",
+                "first_alert_time",
+                "last_alert_time",
+                "success_time",
+            ]
+        )
+
         if self.events.empty or self.history.empty:
-            return pd.DataFrame()
+            return empty_hist_df
 
         # Successful logins actuales
         success_df = self.events[
@@ -127,14 +170,19 @@ class LogCorrelator:
         ].dropna(subset=["timestamp"])
 
         if success_df.empty:
-            return pd.DataFrame()
+            return empty_hist_df
 
         # Historial de brute force (alert_type='bruteforce')
         hist = self.history.copy()
-        hist = hist[hist["alert_type"] == "bruteforce"].dropna(subset=["event_timestamp"])
+        if "alert_type" not in hist.columns or "event_timestamp" not in hist.columns:
+            return empty_hist_df
+
+        hist = hist[hist["alert_type"] == "bruteforce"].dropna(
+            subset=["event_timestamp"]
+        )
 
         if hist.empty:
-            return pd.DataFrame()
+            return empty_hist_df
 
         hist = hist.sort_values("event_timestamp")
         window = timedelta(hours=history_window_hours)
@@ -173,7 +221,7 @@ class LogCorrelator:
                 )
 
         if not results:
-            return pd.DataFrame()
+            return empty_hist_df
 
         return pd.DataFrame(results)
 
@@ -185,18 +233,42 @@ class LogCorrelator:
         Guarda las correlaciones en CSV dentro de alerts/
         - correlated_local.csv
         - correlated_history.csv
+
+        Siempre crea los archivos, aunque estén vacíos
+        (con encabezados de columnas).
         """
 
         os.makedirs(ALERTS_DIR, exist_ok=True)
 
-        if local_df is not None and not local_df.empty:
-            local_df.to_csv(
-                os.path.join(ALERTS_DIR, "correlated_local.csv"),
-                index=False,
+        # DataFrames vacíos por defecto con columnas correctas
+        if local_df is None or local_df.empty:
+            local_df = pd.DataFrame(
+                columns=[
+                    "correlation_type",
+                    "ip",
+                    "user",
+                    "failed_count",
+                    "first_fail_time",
+                    "last_fail_time",
+                    "success_time",
+                ]
             )
 
-        if historical_df is not None and not historical_df.empty:
-            historical_df.to_csv(
-                os.path.join(ALERTS_DIR, "correlated_history.csv"),
-                index=False,
+        if historical_df is None or historical_df.empty:
+            historical_df = pd.DataFrame(
+                columns=[
+                    "correlation_type",
+                    "ip",
+                    "user",
+                    "prior_alerts",
+                    "first_alert_time",
+                    "last_alert_time",
+                    "success_time",
+                ]
             )
+
+        local_path = os.path.join(ALERTS_DIR, "correlated_local.csv")
+        hist_path = os.path.join(ALERTS_DIR, "correlated_history.csv")
+
+        local_df.to_csv(local_path, index=False)
+        historical_df.to_csv(hist_path, index=False)
