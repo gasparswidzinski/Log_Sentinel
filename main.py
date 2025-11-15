@@ -180,6 +180,9 @@ def main():
         reporter.save_report(df, "reports/full_log_report.csv")
         reporter.save_report(fuera, "alerts/offhours_report.csv")
         reporter.save_report(brute, "alerts/bruteforce_report.csv")
+        
+        #  Mini dashboard-resumen antes del panel final
+        show_dashboard_summary(console, df, stats, local_corr, historical_corr)
 
         console.print(
             Panel.fit(
