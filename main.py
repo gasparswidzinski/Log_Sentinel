@@ -15,7 +15,7 @@ except ImportError:
     Console = None
 
 
-def show_dashboard_summary():
+def show_dashboard_summary(console, df, stats, local_corr, historical_corr):
     """
     Muestra un panel-resumen tipo dashboard con los números clave:
     - lineas procesadas
@@ -24,6 +24,45 @@ def show_dashboard_summary():
     - correlaciones locales e historicas
     """
     
+    total_lines = len(df)
+    total_alerts = stats.get("total", 0)
+    
+    #cuenta la cantidad de correlaciones, si df esta vacio da 0
+    local_counts = 0
+    if local_corr is not None and not local_corr.empty:
+        local_counts = len(local_corr)
+    
+    hist_counts = 0
+    if historical_corr is not None and not historical_corr.empty:
+        hist_counts = len(historical_corr)
+    
+    lines = []
+    lines.append(f"[bold]Lineas procesadas:[/bold] {total_lines}")
+    lines.append(f"[bold]Alertas totales:[/bold] {total_alerts}")
+    lines.append("")
+    
+    #alerta por tipo
+    lines.append("[bold]Alertas por tipo:[/bold]")
+    for alert_type, count in stats.get("by_type", {}).items():
+        lines.append(f"- {alert_type}: [yellow]{count}[/yellow]")
+    
+    lines.append("")
+    lines.append(F"[bold]Correlaciones:[/bold]")
+    lines.append(f"Local failed→success: [cyan]{local_counts}[/cyan]")
+    lines.append(f"Históricas brute_force→success: [magenta]{hist_counts}[/magenta]")
+    
+    body = "\n".join(lines)
+    
+    console.print(
+        Panel(
+            body,
+            title="[ Log Sentinel - Dashboard ]",
+            border_style="cyan",
+        )
+    )
+    
+    
+
 
 
 def main():
