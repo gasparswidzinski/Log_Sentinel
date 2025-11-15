@@ -19,50 +19,94 @@ except ImportError:
 
 def show_dashboard_summary(console, df, stats, local_corr, historical_corr):
     """
-    Muestra un panel-resumen tipo dashboard con los números clave:
-    - lineas procesadas
-    - alertas totales
-    - alertas por tipo
-    - correlaciones locales e historicas
+    Muestra un mini dashboard con:
+    - líneas procesadas
+    - alertas totales e internas
+    - top IPs / usuarios
+    - correlaciones locales e históricas
     """
-    
+
     total_lines = len(df)
     total_alerts = stats.get("total", 0)
-    
-    #cuenta la cantidad de correlaciones, si df esta vacio da 0
-    local_counts = 0
-    if local_corr is not None and not local_corr.empty:
-        local_counts = len(local_corr)
-    
-    hist_counts = 0
-    if historical_corr is not None and not historical_corr.empty:
-        hist_counts = len(historical_corr)
-    
-    lines = []
-    lines.append(f"[bold]Lineas procesadas:[/bold] {total_lines}")
-    lines.append(f"[bold]Alertas totales:[/bold] {total_alerts}")
-    lines.append("")
-    
-    #alerta por tipo
-    lines.append("[bold]Alertas por tipo:[/bold]")
-    for alert_type, count in stats.get("by_type", {}).items():
-        lines.append(f"- {alert_type}: [yellow]{count}[/yellow]")
-    
-    lines.append("")
-    lines.append(F"[bold]Correlaciones:[/bold]")
-    lines.append(f"Local failed→success: [cyan]{local_counts}[/cyan]")
-    lines.append(f"Históricas brute_force→success: [magenta]{hist_counts}[/magenta]")
-    
-    body = "\n".join(lines)
-    
-    console.print(
-        Panel(
-            body,
-            title="[ Log Sentinel - Dashboard ]",
-            border_style="cyan",
-        )
+
+    # cantidades de correlaciones
+    local_count = len(local_corr) if local_corr is not None and not local_corr.empty else 0
+    hist_count = (
+        len(historical_corr)
+        if historical_corr is not None and not historical_corr.empty
+        else 0
     )
-    
+
+    by_type = stats.get("by_type", {})
+    top_ips = stats.get("top_ips", {})
+    top_users = stats.get("top_users", {})
+
+    # ---- Regla separadora tipo título ----
+    console.print()
+    console.rule("[bold cyan]🛡️  Log Sentinel – Dashboard[/bold cyan]")
+
+    # -------- Panel 1: Resumen básico --------
+    stats_table = Table(show_header=True, header_style="bold cyan")
+    stats_table.add_column("Métrica")
+    stats_table.add_column("Valor", justify="right")
+
+    stats_table.add_row("Líneas procesadas", str(total_lines))
+    stats_table.add_row("Alertas totales", str(total_alerts))
+    stats_table.add_row("Correlaciones locales", str(local_count))
+    stats_table.add_row("Correlaciones históricas", str(hist_count))
+
+    stats_panel = Panel(stats_table, title="📊 Resumen", border_style="cyan")
+
+    # -------- Panel 2: Alertas por tipo --------
+    alert_table = Table(show_header=True, header_style="bold yellow")
+    alert_table.add_column("Tipo")
+    alert_table.add_column("Cantidad", justify="right")
+
+    for alert_type, count in by_type.items():
+        alert_table.add_row(alert_type, str(count))
+
+    alert_panel = Panel(alert_table, title="🚨 Alertas por tipo", border_style="yellow")
+
+    # mostramos primera fila de paneles
+    console.print(Columns([stats_panel, alert_panel]))
+
+    # -------- Panel 3: Top IPs --------
+    ip_table = Table(show_header=True, header_style="bold magenta")
+    ip_table.add_column("IP")
+    ip_table.add_column("Alertas", justify="right")
+
+    for ip, count in top_ips.items():
+        ip_table.add_row(ip, str(count))
+
+    ip_panel = Panel(ip_table, title="🌐 Top IPs", border_style="magenta")
+
+    # -------- Panel 4: Top Usuarios --------
+    user_table = Table(show_header=True, header_style="bold green")
+    user_table.add_column("Usuario")
+    user_table.add_column("Alertas", justify="right")
+
+    for user, count in top_users.items():
+        user_table.add_row(user, str(count))
+
+    user_panel = Panel(user_table, title="👤 Top Usuarios", border_style="green")
+
+    # segunda fila de paneles
+    console.print(Columns([ip_panel, user_panel]))
+
+    # -------- Panel 5: Resumen de correlaciones --------
+    corr_lines = []
+    corr_lines.append(
+        f"[cyan]Correlaciones locales failed→success:[/cyan] [bold]{local_count}[/bold]"
+    )
+    corr_lines.append(
+        f"[magenta]Correlaciones históricas brute_force→success:[/magenta] [bold]{hist_count}[/bold]"
+    )
+
+    corr_body = "\n".join(corr_lines)
+    corr_panel = Panel(corr_body, title="🔗* Correlaciones", border_style="blue")
+
+    console.print(corr_panel)
+
     
 
 
