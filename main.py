@@ -11,6 +11,8 @@ from core.correlator import LogCorrelator
 try:
     from rich.panel import Panel
     from rich.console import Console
+    from rich.table import Table
+    from rich.columns import Columns
 except ImportError:
     Console = None
 
@@ -106,7 +108,7 @@ def main():
         history_df = load_history()
         stats = history_stats(history_df)
 
-        # 🧠 CORRELACION (local + historica)
+        #  CORRELACION (local + historica)
         correlator = LogCorrelator(df, history_df)
 
         # correlacion local: failed_login -> successful_login en la corrida actual
