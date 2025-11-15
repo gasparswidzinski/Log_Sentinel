@@ -43,7 +43,7 @@ def show_dashboard_summary(console, df, stats, local_corr, historical_corr):
 
     # ---- Regla separadora tipo título ----
     console.print()
-    console.rule("[bold cyan]🛡️  Log Sentinel – Dashboard[/bold cyan]")
+    console.rule("[bold cyan]Log Sentinel – Dashboard[/bold cyan]")
 
     # -------- Panel 1: Resumen básico --------
     stats_table = Table(show_header=True, header_style="bold cyan")
@@ -55,7 +55,7 @@ def show_dashboard_summary(console, df, stats, local_corr, historical_corr):
     stats_table.add_row("Correlaciones locales", str(local_count))
     stats_table.add_row("Correlaciones históricas", str(hist_count))
 
-    stats_panel = Panel(stats_table, title="📊 Resumen", border_style="cyan")
+    stats_panel = Panel(stats_table, title="Resumen", border_style="cyan")
 
     # -------- Panel 2: Alertas por tipo --------
     alert_table = Table(show_header=True, header_style="bold yellow")
@@ -65,7 +65,7 @@ def show_dashboard_summary(console, df, stats, local_corr, historical_corr):
     for alert_type, count in by_type.items():
         alert_table.add_row(alert_type, str(count))
 
-    alert_panel = Panel(alert_table, title="🚨 Alertas por tipo", border_style="yellow")
+    alert_panel = Panel(alert_table, title="Alertas por tipo", border_style="yellow")
 
     # mostramos primera fila de paneles
     console.print(Columns([stats_panel, alert_panel]))
@@ -78,7 +78,7 @@ def show_dashboard_summary(console, df, stats, local_corr, historical_corr):
     for ip, count in top_ips.items():
         ip_table.add_row(ip, str(count))
 
-    ip_panel = Panel(ip_table, title="🌐 Top IPs", border_style="magenta")
+    ip_panel = Panel(ip_table, title="Top IPs", border_style="magenta")
 
     # -------- Panel 4: Top Usuarios --------
     user_table = Table(show_header=True, header_style="bold green")
@@ -88,7 +88,7 @@ def show_dashboard_summary(console, df, stats, local_corr, historical_corr):
     for user, count in top_users.items():
         user_table.add_row(user, str(count))
 
-    user_panel = Panel(user_table, title="👤 Top Usuarios", border_style="green")
+    user_panel = Panel(user_table, title="Top Usuarios", border_style="green")
 
     # segunda fila de paneles
     console.print(Columns([ip_panel, user_panel]))
@@ -103,7 +103,7 @@ def show_dashboard_summary(console, df, stats, local_corr, historical_corr):
     )
 
     corr_body = "\n".join(corr_lines)
-    corr_panel = Panel(corr_body, title="🔗* Correlaciones", border_style="blue")
+    corr_panel = Panel(corr_body, title="Correlaciones", border_style="blue")
 
     console.print(corr_panel)
 
