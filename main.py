@@ -15,6 +15,17 @@ except ImportError:
     Console = None
 
 
+def show_dashboard_summary():
+    """
+    Muestra un panel-resumen tipo dashboard con los números clave:
+    - lineas procesadas
+    - alertas totales
+    - alertas por tipo
+    - correlaciones locales e historicas
+    """
+    
+
+
 def main():
     """ punto de entrada de Log Sentinel """
 
